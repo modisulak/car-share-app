@@ -1,0 +1,17 @@
+{
+  "name": "car_search",
+  "version": "1.0.0",
+  "description": "car search",
+  "main": "CarSearch.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.1",
+    "@babel/preset-react": "^7.10.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

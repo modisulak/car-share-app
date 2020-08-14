@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+{% block heading %}
+<h1>Car hire history for {{ g.user.username }}</h1>
+{% endblock heading %}
+{% for booking in bookings %}
+<!--This will eventually check the history of the user, and display-->
+<article class="media content-section">
+    <div class="media-body">
+        <h4>
+            <a href="{{url_for('main.one_booking', booking_id=booking.id)}}">
+                Booking ID: {{ booking.id }}
+            </a>
+       </h4>
+            <span><b>User ID:</b> {{ booking.user_id }} </span>
+             | 
+            <span><b>Start Time:</b> {{ booking.start_time }}</span>
+             | 
+            <span><b>End Time:</b> {{ booking.end_time }}</span>
+             | 
+            <span><b>Body Type:</b> {{ booking.car.body_type }}</span>
+             | 
+             <span><b>Seats:</b> {{ booking.car.seats }}</span>
+             | 
+             <span><b>Colour:</b> {{ booking.car.colour }} </span>
+        {% if booking.active %}
+            <div class="badge badge-primary">active</div>
+        {% endif %}
+    </div>
+</article>
+{% endfor %}
+{% endblock content %}

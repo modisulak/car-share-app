@@ -1,0 +1,59 @@
+{% extends "layout.html" %} {% block content %}
+<h1>Users</h1>
+<script crossorigin src="https://unpkg.com/react@16.8.0/umd/react.production.min.js"></script>
+<script  crossorigin src="https://cdn.jsdelivr.net/npm/emotion@9.2.12/dist/emotion.umd.min.js"></script>
+<script  crossorigin src="https://unpkg.com/react-dom@16.8.0/umd/react-dom.production.min.js"></script>
+<script  crossorigin src="https://unpkg.com/prop-types@15.5.10/prop-types.min.js"></script>
+<script  crossorigin src="https://unpkg.com/react-input-autosize@2.2.1/dist/react-input-autosize.min.js"></script>
+<script  crossorigin src="https://unpkg.com/react-select@2.1.2/dist/react-select.min.js"></script>
+<!-- <script
+    crossorigin
+    src="https://unpkg.com/babel-standalone@6/babel.min.js"
+></script> -->
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div id="user-react-select">
+        <div class="progress m-3" style="height: 3px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                style="width: 69%;">
+            </div>
+        </div>
+    </div>
+</form>
+<script src="{{ url_for('static', filename='SearchInput.js') }}" ></script>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">actions</th>
+            <th scope="col">ID</th>
+            <th scope="col">Username</th>
+            <th scope="col">First name</th>
+            <th scope="col">Last name</th>
+            <th scope="col">User type</th>
+            <th scope="col">Email address</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>
+                <a class="" href="{{ url_for('main.edit_user', user_id=user.id) }}">
+                    edit
+                </a>
+                <a class="" href="#">
+                    delete
+                </a>
+            </td>
+            <th scope="row">
+                {{ user.id }}
+            </th>
+            <td>{{ user.username}}</td>
+            <td>{{ user.firstname }}</td>
+            <td>{{ user.lastname }}</td>
+            <td>{{ user.userType }}</td>
+            <td>{{ user.email }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+<form method=post class="col-md-6 offset-md-3">
+    <h3>Bluetooth Device Registration</h3>
+    {{ render_field(search_form.search) }}
+    {% if results_form.bt_devices.choices %}
+        <dl>
+            <h6>Search Results</h6>
+            {{ render_field(results_form.bt_devices) }}
+        </dl>
+    <p>{{ render_field(results_form.submit) }}</p>
+    {% endif %}
+</form>
+{% endblock content %}

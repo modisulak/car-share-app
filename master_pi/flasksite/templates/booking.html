@@ -1,0 +1,275 @@
+{% extends "layout.html" %}
+{% block content %}
+<!-- 
+    1. Booking ID and Booking Start_Date. Car Make and Car Model, Car seats, Colour. 
+    2. Car Locked Status. 
+    3. If car is unlocked - return the car button. If Car is locked - Cancel / unlock buttons 
+    4. Strech Goal: Map of where the car is. 
+ -->
+
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <h3> Booking ID: {{ booking.id }}</h3>
+            <p class="article-content">
+                <b>Booking Date:</b> {{ booking.start_time }}
+                <b>End Time:</b> {{ booking.end_time }}
+                <b>Car Make:</b> {{ car.make }}
+                <b>Car Type:</b> {{ car.body_type }}
+                <b>Seats:</b> {{ car.seats }}
+                <b>Colour:</b> {{ car.colour }}
+            </p>
+            {% if booking.active %}
+            <div class="mb-3">
+                <a href="{{ url_for('main.map_one_car', id=car.id)}}" class="btn mb-3 mr-3 btn-outline-dark">Car
+                    Location
+                </a>
+                <div class="mb-3 btn-group btn-group-sm">
+                    <button class="btn btn-outline-secondary" id="authorize_button" style="display: none">Add Booking to
+                        Calendar</button>
+                    <button class="btn btn-outline-secondary" id="add_button" style="display: none">Add Booking to
+                        Google Calendar</button>
+                    <button class="btn btn-outline-secondary" id="signout_button" style="display: none">Change Google
+                        Account</button>
+                </div>
+                <div class="mb-3 mr-3">
+                    {% if car.locked %}
+                    <form method="POST" action="" class="mb-3 mr-3 btn-group">
+                        {{ unlockcarform.hidden_tag() }}
+                        {{ unlockcarform.submit_unlock(
+                                class="btn btn-primary", 
+                                submit="unlock") }}
+                        {% if not booking.userface_status %}
+                        {{ enablefaceunlock.hidden_tag() }}
+                        {{ enablefaceunlock.submit_enablefaceunlock(
+                                    class="btn btn-secondary", 
+                                    submit="faceunlockenable") }}
+                        {% elif booking.userface_status %}
+                        {{ disablefaceunlock.hidden_tag() }}
+                        {{ disablefaceunlock.submit_disablefaceunlock(
+                                    class="btn btn-secondary", 
+                                    submit="faceunlockdisable") }}
+                        {% endif %}
+                    </form>
+                    <form method="POST" action="" onsubmit="checkSubmitFormBool" class="btn-group mb-3 mr-3 btn-group">
+                        {{ cancelbookingform.hidden_tag() }}
+                        {{ cancelbookingform.submit_cancel(
+                                class="btn btn-dark", 
+                                value="cancel", 
+                                onclick="deleteEvent(this)") }}
+                    </form>
+                    {% elif not car.locked %}
+                    <form method="POST" action="" class="btn-group">
+                        {{ returncarform.hidden_tag() }}
+                        {{ returncarform.submit_return(
+                                class="btn btn-secondary", 
+                                value="return") }}
+                    </form>
+                    {% endif %}
+                </div>
+                <small class="text-muted">Note for testers, google calendar events will not work on 127.0.0.1, your web
+                    browser must be on http://localhost for google calendar events to work</small>
+                {% endif %}
+            </div>
+        </div>
+</article>
+<script>
+    // Client ID and API key from the Developer Console
+    var CLIENT_ID = '637042055442-m2ouv4g6e1n54s8cqambe5jqnsbc7m1m.apps.googleusercontent.com';
+    var API_KEY = 'AIzaSyDzs6VJiYsd3c88OLvoVCHwHAp4Kdjx_P4';
+
+    // Array of API discovery doc URLs for APIs used by the quickstart
+    var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+
+    // Authorization scopes required by the API; multiple scopes can be
+    // included, separated by spaces.
+    var SCOPES = "https://www.googleapis.com/auth/calendar";
+
+    var authorizeButton = document.getElementById('authorize_button');
+    var signoutButton = document.getElementById('signout_button');
+    var addButton = document.getElementById('add_button');
+
+
+    //{% if booking.calendar_id %}
+    //var content = '';
+    //{% endif %}
+    /**
+     *  On load, called to load the auth2 library and API client library.
+     */
+    function handleClientLoad() {
+        gapi.load('client:auth2', initClient);
+    }
+
+    /**
+     *  Initializes the API client library and sets up sign-in state
+     *  listeners.
+     */
+    function initClient() {
+        gapi.client.init({
+            apiKey: API_KEY,
+            clientId: CLIENT_ID,
+            discoveryDocs: DISCOVERY_DOCS,
+            scope: SCOPES
+        }).then(function () {
+            // Listen for sign-in state changes.
+            console.log("INIT CLIENT")
+            gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+            // Handle the initial sign-in state.
+            updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+            authorizeButton.onclick = handleAuthClick;
+            signoutButton.onclick = handleSignoutClick;
+            addButton.onclick = handleAddClick;
+        }, function (error) {
+            console.log((JSON.stringify(error, null, 2)));
+        });
+    }
+
+    /**
+     *  Called when the signed in status changes, to update the UI
+     *  appropriately. After a sign-in, the API is called.
+     */
+    function updateSigninStatus(isSignedIn) {
+        {% if show_google_calender_button %}
+        if (isSignedIn) {
+            authorizeButton.style.display = 'none';
+            addButton.style.display = 'block';
+            signoutButton.style.display = 'block';
+        } else {
+            authorizeButton.style.display = 'block';
+            addButton.style.display = 'none';
+            signoutButton.style.display = 'none';
+        }
+        {% endif %}
+    }
+
+    /**
+     *  Sign in the user upon button click.
+     */
+    function handleAuthClick(event) {
+        gapi.auth2.getAuthInstance().signIn();
+    }
+
+    /**
+     *  Sign out the user upon button click.
+     */
+    function handleSignoutClick(event) {
+        gapi.auth2.getAuthInstance().signOut();
+    }
+
+    /**
+     *  Handles the deletion of the event if they cancel the booking
+     */
+    function handleAddClick(event) {
+        createEvent();
+        addButton.className = 'btn btn-outline-secondary'
+        addButton.innerHTML = "Google Calendar Event Created!"
+    }
+
+    /**
+     * Append a pre element to the body containing the given message
+     * as its text node. Used to display the results of the API call.
+     *
+     * @param {string} message Text to be placed in pre element.
+     */
+    /** function appendPre(message) {
+        var pre = document.getElementById('content');
+        var textContent = document.createTextNode(message + '\n');
+        pre.appendChild(textContent);
+    } **/
+
+    /**
+     * Print the summary and start datetime/date of the next ten events in
+     * the authorized user's calendar. If no events are found an
+     * appropriate message is printed.
+     */
+
+    function createEvent() {
+        var today = new Date();
+
+        //Checks for formatting dependant on the day or month
+        if (today.getMonth() < 9 && today.getDate() < 10) {
+            var DateTime = today.getFullYear() + '-' + '0' + (today.getMonth() + 1) + '-' + '0' + today.getDate();
+        } else if (today.getMonth() < 9) {
+            var DateTime = today.getFullYear() + '-' + '0' + (today.getMonth() + 1) + '-' + today.getDate();
+        } else if (today.getDate() < 10) {
+            var DateTime = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + '0' + today.getDate();
+        } else {
+            var DateTime = today.getFullYear() + '-' + '0' + (today.getMonth() + 1) + '-' + today.getDate();
+        };
+        var event = {
+            'summary': 'Booking of Car: {{ car.make }}',
+            'location': '{{ car.lng }}, {{ car.lat }}',
+            'description': 'Car: {{ car.make }}, Colour: {{ car.colour }}, Body Type: {{ car.body_type }} Seats: {{ car.seats }}',
+            'start': {
+                'date': DateTime,
+                'timeZone': 'Australia/Sydney'
+            },
+            'end': {
+                'date': DateTime,
+                'timeZone': 'Australia/Sydney'
+            },
+
+            'reminders': {
+                'useDefault': true,
+            }
+        };
+
+        var request = gapi.client.calendar.events.insert({
+            'calendarId': 'primary',
+            'resource': event
+        });
+
+        request.execute(function (event) {
+            console.log(event)
+            fetch("/add_google_calendar_event_id", {
+                method: 'POST',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                redirect: 'manual',
+                body: JSON.stringify({
+                    booking_id: {{ booking.id }},
+                calendar_event_id: event.id
+                })
+        }).then(function (response) {
+            window.location.reload()
+            });
+        })
+    }
+
+    {% if booking.calendar_id %}
+    var submitForm = false;
+    {% else %}
+    var submitForm = true;
+    {% endif %}
+
+    function checkSubmitFormBool(evt) {
+        if (submitForm) {
+            return true;
+        } else {
+            evt.preventDefault();
+        }
+        return false;
+    }
+    function deleteEvent(btn) {
+        var form = btn.form
+        var request = gapi.client.calendar.events.delete({
+            'eventId': '{{ booking.calendar_id }}',
+            'calendarId': 'primary'
+        });
+
+        request.execute(function (response) {
+            // tried our best
+            // handling this type of error is low priority
+            // TODO handle error (sentry?)
+            submitForm = true;
+            form.submit();
+        })
+    }
+</script>
+{% if booking.active %}
+<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()">
+</script>
+{% endif %}
+{% endblock content %}

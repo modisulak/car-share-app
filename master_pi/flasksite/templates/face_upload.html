@@ -1,0 +1,63 @@
+{% extends "layout.html" %} {% block content %}
+<div class="content-section">
+    <h2>Directions</h2>
+    Use your phone's web browser for the best experience.
+    <ol>
+        <li>On iPhone or Android, press "Record" button</li>
+        <li>
+            Select new recording option ('New Video' on iPhone, or equivelant
+            option on Android)
+        </li>
+        <li>Hold phone parallel with your face</li>
+        <li>Press record</li>
+        <li>
+            To get a more diverse range of lighting, keep your phone's camera on
+            your face with your arms horizontal, then rotate 360 degrees
+        </li>
+        <li>Stop recording</li>
+        <li>
+            Recording should be around <= 8 seconds long and upto 2MB in size
+        </li>
+        <li>
+            Please make sure yours is the only face that appears throughout the
+            video
+        </li>
+        <li>Press 'Upload' button</li>
+        <li>
+            Please wait for the browser to redirect you after pressing 'Upload'
+            button
+        </li>
+    </ol>
+    <form method="POST" action="" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">
+                Record using your phone 👉📱✅
+            </legend>
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        {{ form.file.label(class="input-group-text") }}
+                    </div>
+                    <div class="custom-file">
+                        {% if form.file.errors %} {{
+                        form.file(class="custom-file-input is-invalid",
+                        accept="video/*") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.file.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %} {{ form.file(class="custom-file-input",
+                        accept="video/*") }} {% endif %}
+                        <label class="custom-file-label" for="file">🤳</label>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+</div>
+{% endblock content %}

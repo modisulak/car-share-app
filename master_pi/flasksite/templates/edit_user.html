@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<article class="media content-section col-md-6 offset-md-3">
+    <div class="media-body">
+        <div class="article-metadata">
+            <h3> User ID: {{ user.id }}</h3>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <p>
+                        {{ form.username.label(class="form-control-label")}} <strong>{{ user.username }}</strong>
+                        {{ form.username(class="form-control form-control-lg", value=user.username) }}
+                    </p>
+                    <p>
+                        {{ form.firstname.label(class="form-control-label")}} <strong>{{ user.firstname }}</strong>
+                        {{ form.firstname(class="form-control form-control-lg", value=user.firstname) }}
+                    </p>
+                    <p>
+                        {{ form.lastname.label(class="form-control-label")}} <strong>{{ user.lastname}}</strong>
+                        {{ form.lastname(class="form-control form-control-lg", value=user.lastname) }}
+                    </p>
+                    <p>
+                        {{ form.userType.label(class="form-control-label")}} <strong>{{ user.userType }}</strong>
+                        {{ form.userType(class="form-control form-control-lg", value=user.userType) }}
+                    </p>
+                    <p>
+                        {{ form.email.label(class="form-control-label")}} <strong>{{ user.email }}</strong>
+                        {{ form.email(class="form-control form-control-lg", value=user.email) }}
+                    </p>
+                    <p>
+                        {{ form.pushbullet.label(class="form-control-label")}} <strong>{{ user.pushbullet }}</strong>
+                        {{ form.pushbullet(class="form-control form-control-lg", value=user.pushbullet) }}
+                    </p>
+                    <p>
+                        {{ form.br_address.label(class="form-control-label")}} <strong>{{ user.br_address }}</strong>
+                        {{ form.br_address(class="form-control form-control-lg", value=user.br_address) }}
+                    </p>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+
+</article>
+
+
+{% endblock content %}

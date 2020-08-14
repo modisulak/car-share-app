@@ -1,0 +1,63 @@
+{% extends "layout.html" %} {% block content %}
+<div id="accordion">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                    aria-controls="collapseOne">
+                    Collapsible Group Item #1
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div id="react-select">
+                        <fieldset class="form-group">
+                            <span class="mr-3 mb-5"><strong>Filter By:</strong></span>
+                            <div class="form-group"></div>
+                            <div class="progress m-3">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                    style="width: 69%;">
+                                    Loading Filtering Options
+                                </div>
+                            </div>
+                            <input class="btn btn-link btn-primary btn-block btn" name="submit" type="submit"
+                                value="Search" />
+                        </fieldset>
+                    </div>
+                </form>
+                <script src="{{ url_for('static', filename='CarSearch.js') }}" defer></script>
+                {% for car in cars %}
+                <article class="media content-section">
+                    <div class="media-body">
+                        <div class="article-metadata">
+                            {%if not car.active %}
+                            <a class="mr-2" href="{{ url_for('main.one_car', car_id=car.id) }}">Book Car</a>
+                            {% else %}
+                            <span class="badge badge-grey">in use</span>
+                            {% endif %}
+                            <h3 class="article-title">{{ car.make }}</h3>
+                            <div class="article-content">
+                                {{ car.colour }} · {{ car.body_type }} · {{ car.seats }} seats ·
+                                ${{ car.costPerHour }}/hr {% if not car.active %} · {{ car.lng
+                            }}, {{ car.lat }} {% endif %}
+                            </div>
+                            {% if g.user.userType == 'A' %}
+                            <div class="">
+                                <a style:"text-align: right;" href="{{ url_for('main.edit_car', car_id=car.id) }}">Edit
+                                    Car</a> <br>
+                                <a style:"text-align: right;"
+                                    href="{{ url_for('main.report_car', car_id=car.id) }}">Report
+                                    Car</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+    {% endfor %} {% endblock content %}

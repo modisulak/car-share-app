@@ -1,0 +1,55 @@
+{% extends "layout.html" %} {% block content %}
+<h1>Cars</h1>
+<script defer crossorigin src="https://unpkg.com/react@16.8.0/umd/react.production.min.js"></script>
+<script defer crossorigin src="https://cdn.jsdelivr.net/npm/emotion@9.2.12/dist/emotion.umd.min.js"></script>
+<script defer crossorigin src="https://unpkg.com/react-dom@16.8.0/umd/react-dom.production.min.js"></script>
+<script defer crossorigin src="https://unpkg.com/prop-types@15.5.10/prop-types.min.js"></script>
+<script defer crossorigin src="https://unpkg.com/react-input-autosize@2.2.1/dist/react-input-autosize.min.js"></script>
+<script defer crossorigin src="https://unpkg.com/react-select@2.1.2/dist/react-select.min.js"></script>
+<!-- <script
+    crossorigin
+    src="https://unpkg.com/babel-standalone@6/babel.min.js"
+></script> -->
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <div id="car-react-select">
+        <div class="progress m-3" style="height: 3px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                style="width: 69%;">
+            </div>
+        </div>
+    </div>
+</form>
+<script src="{{ url_for('static', filename='SearchInput.js', cachekey=cachekey) }}" defer></script>
+{% for car in cars %}
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            {%if car.active %}
+                <span class="badge badge-grey">in use</span>
+            {% else %}
+                <a class="mr-2" href="{{ url_for('main.one_car', car_id=car.id) }}">
+                    Book Car
+                </a>
+            {% endif %}
+            {% if g.user.userType == 'A' %}
+                <span class="float-right">
+                    <a href="{{ url_for('main.edit_car', car_id=car.id) }}">
+                        Edit
+                    </a>
+                    |
+                    <a href="{{ url_for('main.report_car', car_id=car.id) }}">
+                        Report
+                    </a>
+                </span>
+            {% endif %}
+            <h3 class="article-title">{{ car.make }}</h3>
+            <div>
+                {{ car.colour }} · {{ car.body_type }} · {{ car.seats }} seats ·
+                ${{ car.costPerHour }}/hr {% if not car.active %} · {{ car.lng
+                }}, {{ car.lat }} {% endif %}
+            </div>
+        </div>
+    </div>
+</article>
+{% endfor %} {% endblock content %}

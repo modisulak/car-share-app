@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<article class="media content-section col-md-6 offset-md-3">
+    <div class="media-body">
+        <div class="article-metadata">
+            <h3> Enter Car Details Below: </h3>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <p>
+                        {{ form.make.label(class="form-control-label")}}
+                        {{ form.make(class="form-control form-control-lg") }}
+                    </p>
+                    <p>
+                        {{ form.body_type.label(class="form-control-label")}}
+                        {{ form.body_type(class="form-control form-control-lg")}}
+                    </p>
+                    <p>
+                        {{ form.colour.label(class="form-control-label")}}
+                        {{ form.colour(class="form-control form-control-lg")}}
+                    </p>
+                    <p>
+                        {{ form.seats.label(class="form-control-label")}}
+                        {{ form.seats(class="form-control form-control-lg", type="number")}}
+                    </p>
+                    <p>
+                        {{ form.cost.label(class="form-control-label")}}
+                        {{ form.cost(class="form-control form-control-lg", type="number")}}
+                    </p>
+                    <p>
+                        {{ form.lng.label(class="form-control-label")}}
+                        {{ form.lng(class="form-control form-control-lg", type="number")}}
+                    </p>
+                    <p>
+                        {{ form.lat.label(class="form-control-label")}}
+                        {{ form.lat(class="form-control form-control-lg", type="number")}}
+                    </p>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-primary", value="create") }}
+                    </div>
+                </div>
+            </form>
+        </div>
+
+</article>
+
+
+{% endblock content %}

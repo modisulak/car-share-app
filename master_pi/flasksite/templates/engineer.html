@@ -1,0 +1,62 @@
+{% extends "maps.html" %}
+{% block heading %}
+<h3 align="center">Car Reports</h3>
+{% endblock heading %}
+{% block mapcontent %}
+{% if cars %}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">actions</th>
+            <th scope="col">ID</th>
+            <th scope="col">make</th>
+            <th scope="col">body type</th>
+            <th scope="col">colour</th>
+            <th scope="col">locked</th>
+            <th scope="col">latitude</th>
+            <th scope="col">longitude</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for car in cars %}
+        <tr>
+            <td>
+                <a class="" href="{{ url_for('main.one_car', car_id=car.id) }}">
+                    view
+                </a>
+            <th scope="row">{{ car.id }}</th>
+            <td>{{ car.make }}</td>
+            <td>{{ car.body_type }}</td>
+            <td>{{ car.colour }}</td>
+            <td>{{ car.locked }}</td>
+            <td>{{ car.lat }}</td>
+            <td>{{ car.lng }}</td>
+        </tr>
+        {% for report in car.reports %}
+        <tr>
+            <td></td>
+            <td>
+                {% if not report.resolved %}
+                    <a class="" href="{{ url_for('main.view_car_report', car_id=car.id, report_id=report.id) }}">
+                        Resolve
+                    </a>
+                {% endif %}
+
+            </td>
+            <td><b>Report ID: </b>{{report.id}}</td>
+            <td colspan="5"><b>Description: </b>{{report.description}}
+                {% if not report.resolved %}
+                <div class="badge badge-primary float-right">unresolved</div>
+                {% endif %}
+            </td>
+            <td><b>Date: </b> {{report.date_created}}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <th colspan="7"></th>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <h4>No unresolved car reports</h4>
+        {% endif %}
+        {% endblock mapcontent %}

@@ -1,0 +1,24 @@
+Who Did What
+Jack Hollis-London s3585034:
+    Engineer Car Report Pages/Api
+    Car report creation
+    Pushbullet notifications
+    User Search
+    Bluetooth Registration/Unlock
+    Tests using pytest
+    input validation
+    Documentation
+    Trello Board
+    Github
+    README.md instructions
+
+Moditha Sulakshana s3756843:
+    Admin Add User, Edit User, Add Car Pages/Api
+    Car Report creation
+    Voice search for cars
+    User search
+    QR Code report resolution for Engineers
+    Data visualisation for Manager
+    Documentation
+    Trello Board
+    Github

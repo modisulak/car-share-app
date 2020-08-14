@@ -1,0 +1,21 @@
+MASTER (UserCredentialsRequest) 
+    -> Agent.LoadUserCredentials... activate facial recog on the Agent...
+
+... facial recog successful... AGENT (UserCredentialsRequest) 
+    -> Master.UnlockCarRequest... master pi validates internally...
+
+
+
+
+
+
+
+
+
+
+
+... if master pi validation of user creds is successful,
+MASTER (GeneralRequest)
+    -> Agent.UnlockCar... agent unlocks the car
+
+

@@ -1,0 +1,113 @@
+// credit to https://developers.google.com/protocol-buffers/docs/proto3
+// Reference: https://grpc.io/docs/quickstart/python.html#update-a-grpc-service
+
+syntax = "proto3";
+
+//python3 -m grpc_tools.protoc -I proto --python_out=. --grpc_python_out=. proto/css_rpc/*.proto
+
+// service that runs on Master Pi
+service MasterService {
+    // used to link Car to AP so MP can contact correct AP to control car
+    rpc AgentCarInit (AgentCarInitRequest) returns (AgentCarInitResponse) {}
+    // Agent can unlock car from an internal service (eg facial recognition)
+    // (requires userType=U to have an active booking with agent car)
+    // If car_id is specfied in UserCredentialsRequest, userType must be "E"
+    // otherwise access will be unauthorized
+    rpc UnlockCarRequest (UserCredentialsRequest) returns (GeneralResponse) {}
+    // report the currentlocation of the car
+    rpc ReportLocation (Location) returns (GeneralResponse) {}
+    // enable voice recognition
+    rpc VoiceRecognitionQuery(GeneralRequest) returns (GeneralResponse) {}
+    // search for bluetooth devices near masterservice
+    rpc SearchBluetooth(GeneralRequest) returns (BluetoothSearchResponse) {}
+    // resolve a car report
+    rpc ResolveCarReport(CarReportRequest) returns (GeneralResponse) {}
+}
+
+message Location {
+    float latitude = 1;
+    float longitude = 2;
+    string car_id = 3;
+}
+
+message CarReportRequest {
+    UserCredentialsRequest user = 1;
+    string report_id = 2;
+}
+
+
+message AgentCarInitRequest {
+    string car_id = 1;
+}
+
+message AgentCarInitResponse {
+    bool locked = 1;
+    double lat = 2;
+    double lng = 3;
+    string ip_address = 4;
+    string port = 5;
+    UserCredentialsRequest user_credentials = 6;
+}
+
+message BluetoothDevice {
+    string device_name = 1;
+    string bd_addr = 2;
+}
+
+message BluetoothSearchResponse {
+    repeated BluetoothDevice results = 1;
+}
+
+service AgentService {
+    // load user credentials, or replace current creds if updated by user
+    rpc LoadUserCredentials (UserCredentialsRequest) returns (GeneralResponse) {}
+    // activate or deactivate facial recognition
+    rpc SetFaceUnlockStatus (FaceUnlockStatus) returns (GeneralResponse) {}
+    // MP tells AP to unlock car
+    rpc UnlockCar (GeneralRequest) returns (GeneralResponse) {}
+    // MP tells AP to lock car (AP sends bt msg)
+    rpc LockCar (GeneralRequest) returns (GeneralResponse) {}
+    // user returns car, booking over, stop all FaceRecog services
+    // delete UserCredentials from AP
+    // Report the location of the car to the Masterservice
+    rpc UnloadUser (GeneralRequest) returns (GeneralResponse) {}
+    //enable QR code recognition
+    rpc QRCodeQuery (GeneralRequest) returns (GeneralResponse) {}
+
+    // start bluetooth unlock search subprocess if not already active
+    // add new car_id+user_id+end_time to bt unlock list in database, unlock
+    // add end_time that removes user address from bt unlock list
+    // if address discovered
+    //      bluetooth unlock search attempts car unlock if bluetooth address found
+    // bluetooth unlock search subprocess stops when unlock list empty
+    rpc BTProximityUnlock(BluetoothUnlockUser) returns (GeneralResponse) {}
+
+}
+
+message BluetoothUnlockUser {
+    string bd_addr = 1;
+    UserCredentialsRequest user = 2;
+}
+
+message FaceUnlockStatus {
+    bool running = 1;
+}
+
+message GeneralRequest {
+    string data = 1;
+}
+
+
+message UserCredentialsRequest {
+    string id = 1;
+    string username = 2;
+    string authtoken = 3;
+    string user_face_model = 4;
+    string car_id = 5;
+}
+
+message GeneralResponse {
+    string status = 1;
+    string message = 2;
+}
+

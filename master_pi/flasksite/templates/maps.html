@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block content %}
+<!--MAP GOES HERE-->
+{% block heading %}
+<h3 align="center">Car Locations</h3>
+{% endblock heading %}
+<!--The div element for the map -->
+<div id="map"></div>
+{% for car in cars %}
+<script>
+    var car{{ car.id }} = { lat: {{ car.lat }}, lng: {{ car.lng }} };
+</script>
+{% endfor %}
+<script>
+    var center = { lat: 0, lng: 0 }; 
+</script>
+<script>
+    // Initialize and add the map
+    function initMap() {
+        // The location of Uluru
+
+        // The map, centered at Uluru
+        var map = new google.maps.Map(
+            document.getElementById('map'), { zoom: 1, center: center });
+        // The marker, positioned at Uluru
+        {% for car in cars %}
+            var Marker{{ car.id }} = new google.maps.Marker({ position: car{{ car.id }}, map: map, title: "marker{{ car.id }}" });
+            var contentString{{ car.id }} = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h5 id="firstHeading" class="firstHeading">Car ID: {{ car.id }}</h5>'+
+            '<div id="bodyContent">'+
+            '<div><b>Make:</b> {{ car.make }}</div>'+
+            '<div><b>Body Type:</b> {{ car.body_type }}</div>'+
+            '<div><b>Colour:</b> {{ car.colour }}</div>'+
+            '<div><b>Seats:</b> {{ car.seats }}</div>'+
+            '<h6><b><a href="{{ url_for('main.one_car', car_id=car.id) }}">book car</a></b></h6>'+
+            '</div>'+
+            '</div>';
+
+        var infowindow{{ car.id }} = new google.maps.InfoWindow({
+            content: contentString{{ car.id }}
+        });
+
+        Marker{{ car.id }}.addListener('click', function() {
+            infowindow{{ car.id }}.open(map, Marker{{ car.id }});
+        });
+        {% endfor %}
+        
+        
+    }
+</script>
+<script>
+
+</script>
+<!--Load the API from the specified URL
+* The async attribute allows the browser to render the page while the API loads
+* The key parameter will contain your own API key (which is not needed for this tutorial)
+* The callback parameter executes the initMap() function
+-->
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDzs6VJiYsd3c88OLvoVCHwHAp4Kdjx_P4&callback=initMap">
+    </script>
+
+{% block mapcontent %}
+{% endblock mapcontent %}
+
+{% endblock content %}

@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<article class="media content-section col-md-6 offset-md-3">
+    <div class="media-body">
+        <div class="article-metadata">
+            <h3> Car ID: {{ car.id }}</h3>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <p>
+                        {{ form.make.label(class="form-control-label")}} <strong>{{ car.make }}</strong>
+                        {{ form.make(class="form-control form-control-lg", value=car.make) }}
+                    </p>
+                    <p>
+                        {{ form.body_type.label(class="form-control-label")}} <strong>{{ car.body_type }}</strong>
+                        {{ form.body_type(class="form-control form-control-lg", value=car.body_type) }}
+                    </p>
+                    <p>
+                        {{ form.colour.label(class="form-control-label")}} <strong>{{ car.colour}}</strong>
+                        {{ form.colour(class="form-control form-control-lg", value=car.colour) }}
+                    </p>
+                    <p>
+                        {{ form.seats.label(class="form-control-label")}} <strong>{{ car.seats }}</strong>
+                        {{ form.seats(class="form-control form-control-lg", value=car.seats, type="number") }}
+                    </p>
+                    <p>
+                        {{ form.cost.label(class="form-control-label")}} <strong>{{ car.costPerHour }}</strong>
+                        {{ form.cost(class="form-control form-control-lg", value=car.costPerHour, type="number") }}
+                    </p>
+                    <p>
+                        {{ form.lng.label(class="form-control-label")}} <strong>{{ car.lng }}</strong>
+                        {{ form.lng(class="form-control form-control-lg", value=car.lng, type="number") }}
+                    </p>
+                    <p>
+                        {{ form.lat.label(class="form-control-label")}} <strong>{{ car.lat }}</strong>
+                        {{ form.lat(class="form-control form-control-lg", value=car.lat, type="number") }}
+                    </p>
+                    <div class="form-group">
+                        {% block submit %}
+                            {{ form.submit(class="btn btn-outline-info") }}
+                        {%endblock submit %}
+                    </div>
+                </div>
+            </form>
+        </div>
+
+</article>
+
+
+{% endblock content %}

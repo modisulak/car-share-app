@@ -1,0 +1,59 @@
+{% extends "engineer.html" %}
+{% block heading %}
+<div style="border:solid" class="col-md-6 offset-md-3 mb-4">
+    <h3 align="center">Car Report ID: {{report.id}}</h3>
+    <h4>Actions:</h4>
+    <div style="margin:1%">
+        <form method="POST" action="">
+            <input type="submit" class="btn btn-primary" name="submit_enablebluetooth"
+                    value="Activate Bluetooth Unlock">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                View QRCode
+            </button>
+            {% for car in cars %}
+                {% if not car.locked %}
+                    <input type="submit" class="btn btn-primary" name="submit_lockcar"
+                            value="Lock Car">
+                {% endif %}
+            {% endfor %}
+            <div class="modal" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">QR Code</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <div style="width: 100%;" id="qrcode"></div>
+                            <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"
+                                crossorigin="anonymous">
+                                </script>
+                            <script type="text/javascript">
+                                var obj = { user_id: "{{g.user.id}}", report_id: "{{report.id}}" };
+                                new QRCode(document.getElementById("qrcode"), {
+                                    text: JSON.stringify(obj),
+                                    width: 128,
+                                    height: 128,
+                                    colorDark: "#000000",
+                                    colorLight: "#ffffff",
+                                    correctLevel: QRCode.CorrectLevel.H
+                                }
+                                );
+                            </script>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock heading %}

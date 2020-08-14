@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ url_for('static', filename='icons/apple-icon-57x57.png') }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ url_for('static', filename='icons/apple-icon-60x60.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ url_for('static', filename='icons/apple-icon-72x72.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='icons/apple-icon-76x76.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114"
+        href="{{ url_for('static', filename='icons/apple-icon-114x114.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120"
+        href="{{ url_for('static', filename='icons/apple-icon-120x120.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144"
+        href="{{ url_for('static', filename='icons/apple-icon-144x144.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152"
+        href="{{ url_for('static', filename='icons/apple-icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="{{ url_for('static', filename='icons/apple-icon-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192"
+        href="{{ url_for('static', filename='icons/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='icons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='icons/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='icons/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='icons/manifest.json') }}">
+    <meta name="theme-color" content="#00a91a">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- main.css -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+
+    <style>
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 500px;
+            /* The height is 400 pixels */
+            width: 100%;
+            /* The width is the width of the web page */
+        }
+    </style>
+
+
+    {% if title %}
+    <title>Car Share - {{ title }}</title>
+    {% else %}
+    <title>Car Share</title>
+    {% endif %}
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+            <div class="container">
+                <a class="navbar-brand mr-4" href="/">Car Share</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+                    aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarToggle">
+                    <div class="navbar-nav mr-auto">
+                        <a class="nav-item nav-link" href="{{ url_for('main.home') }}">Home</a>
+                        <a class="nav-item nav-link" href="{{ url_for('main.history_booking') }}">History</a>
+                        <a class="nav-item nav-link" href="{{ url_for('main.all_cars') }}">Book a
+                            Car</a>
+                        <a class="nav-item nav-link" href="{{ url_for('main.maps') }}">Map</a>
+                        {% if g.current_booking %}
+                        <a class="nav-item nav-link"
+                            href="{{ url_for('main.one_booking', booking_id=g.current_booking.id) }}">Current
+                            Booking</a>
+                        {% endif %}
+                        {% if g.user.userType == 'A' %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Admin Tools
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{{ url_for('main.rental_history') }}">Car Rental History</a>
+                                <a class="dropdown-item" href="{{ url_for('main.add_car') }}">Add Car</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ url_for('main.users') }}">View/Edit Users</a>
+                            </div>
+                        </div>
+                        {% elif g.user.userType == 'E' %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Engineer Tools
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{{ url_for('main.engineer') }}">Car Reports</a>
+                            </div>
+                        </div>
+                        {% elif g.user.userType == 'M' %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Manager Tools
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{{ url_for('main.manager') }}">Data Studio</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <!-- Navbar Right Side -->
+                    <div class="navbar-nav">
+                        {% if g.user %}
+                        <a class="nav-item nav-link" href="#">{{ g.user.username }}</span></li>
+                            <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                            {% else %}
+                            <a class="nav-item nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                            <a class="nav-item nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                            {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+    <main role="main" class="container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div  class="col-md-6 offset-md-3">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock content %}
+        </div>
+    </main>
+
+    <!-- Bootstrap Javascript, jQuery and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
