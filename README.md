@@ -2,9 +2,9 @@
 
 ## **RMIT PIoT Course Assignment 2: IoT CarShare Project**
 
-## **The Team**
-Moditha Sulakshana (me)
-Jack-Hollis-London - [GitHub](https://github.com/jh0l)
+## The Team
+* Moditha Sulakshana (me)
+* Jack-Hollis-London - [GitHub](https://github.com/jh0l)
 
 ## Run the Master-Pi Flask Server
 
